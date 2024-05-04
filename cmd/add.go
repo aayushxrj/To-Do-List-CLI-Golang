@@ -6,8 +6,10 @@ package cmd
 import (
 	// "fmt"
 	"log"
+
 	"github.com/aayushxrj/pluto/todo"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // addCmd represents the add command
@@ -24,7 +26,7 @@ func addRun(cmd *cobra.Command, args []string){
 	// why ?
 	// var items = []todo.Item{}
 
-	items, err := todo.ReadItems(dataFile)
+	items, err := todo.ReadItems(viper.GetString("dataFile"))
 	if err != nil {
 		log.Printf("%v", err)
 	}
@@ -37,7 +39,7 @@ func addRun(cmd *cobra.Command, args []string){
 		items = append(items, item)
 	}
 	// fmt.Printf("%#v\n", items)
-	err = todo.SaveItems(dataFile, items)
+	err = todo.SaveItems(viper.GetString("dataFile"), items)
 	if err!=nil {
 		log.Printf("%v", err)
 	}

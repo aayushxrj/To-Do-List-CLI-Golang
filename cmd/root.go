@@ -4,10 +4,13 @@ Copyright © 2024 Aayush Ranjan
 package cmd
 
 import (
+	"fmt"
 	"log"
 	"os"
+
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -32,12 +35,28 @@ func Execute() {
 	}
 }
 
+var cfgFile string
+
+func initConfig(){
+	viper.SetConfigFile(".pluto")
+	viper.AddConfigPath("$HOME")
+	viper.AutomaticEnv()
+
+	viper.SetEnvPrefix("pluto")
+
+	//If a config file is found. read it in
+	if err := viper.ReadInConfig(); err == nil {
+		fmt.Println("Using config file:", viper.ConfigFileUsed())
+	}
+}
+
+
 func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
-
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.pluto.yaml)")
+	cobra.OnInitialize(initConfig)
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.pluto.yaml)")
 
 	//added
 	home, err := homedir.Dir()
@@ -53,5 +72,3 @@ func init() {
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
-
-
